@@ -18,6 +18,7 @@ const ProtectedPage = ({ children }) => {
       console.error("Authentication error:", error);
       navigate("/login");
     },
+    withCredentials: true, // Add this option
   });
 
   useEffect(() => {

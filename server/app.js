@@ -39,10 +39,10 @@ app.use(
     saveUninitialized: false,
     store: store,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
       httpOnly: true, // cookie cannot be accessed by client side javascript
       secure: true, // Set to true in production
-      sameSite: "none",
+      maxAge: 3 * 24 * 60 * 60 * 1000, // cookie is sent only to the same site as the one that originated it
+      sameSite: "None", // Required for cross-site requests
     },
   }),
 );

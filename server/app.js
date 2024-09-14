@@ -20,8 +20,9 @@ const httpServer = http.createServer(app);
 
 app.use(
   cors({
-    origin: "https://budgettrackerui.vercel.app", // Adjust this to match your client's URL
+    origin: "https://budgettrackerui.vercel.app", // Your frontend URL
     credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
   }),
 );
 const MongoDbStore = ConnectMongo(session);
@@ -34,15 +35,16 @@ store.on("error", (err) => console.log("Session store error:", err));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Make sure this is set correctly
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store,
     cookie: {
-      httpOnly: true, // cookie cannot be accessed by client side javascript
-      secure: true, // Set to true in production
-      maxAge: 3 * 24 * 60 * 60 * 1000, // cookie is sent only to the same site as the one that originated it
-      sameSite: "None", // Required for cross-site requests
+      maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
+      httpOnly: true,
+      secure: true, // Required for cookies to work on HTTPS
+      sameSite: "none", // Required for cross-site cookie setting
+      path: "/", // Ensure cookie is accessible for all paths
     },
   }),
 );
@@ -68,9 +70,11 @@ app.use(
     context: async ({ req, res }) => buildContext({ req, res }),
   }),
 );
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {

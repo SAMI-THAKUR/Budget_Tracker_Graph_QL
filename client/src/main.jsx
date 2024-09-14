@@ -8,8 +8,10 @@ import "./index.css";
 
 const client = new ApolloClient({
   uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
-  cache: new InMemoryCache(),
   credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 createRoot(document.getElementById("root")).render(

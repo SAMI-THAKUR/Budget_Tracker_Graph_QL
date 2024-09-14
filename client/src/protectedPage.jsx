@@ -24,6 +24,7 @@ const ProtectedPage = ({ children }) => {
       if (authData?.authUser) {
         dispatch(setUser(authData.authUser));
       } else {
+        console.log(authData);
         console.warn("User is not authenticated.");
         navigate("/login");
       }

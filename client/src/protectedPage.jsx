@@ -29,7 +29,7 @@ const ProtectedPage = ({ children }) => {
         navigate("/login");
       }
     }
-  }, [authLoading, authData, navigate, dispatch]);
+  }, [authLoading, authData]);
 
   if (authLoading) {
     return <div>Loading...</div>;

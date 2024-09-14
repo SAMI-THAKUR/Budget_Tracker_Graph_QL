@@ -34,6 +34,7 @@ store.on("error", (err) => console.log("Session store error:", err));
 
 app.use(
   session({
+    sameSite: "none",
     secret: process.env.SESSION_SECRET, // Make sure this is set correctly
     resave: false,
     saveUninitialized: false,

@@ -14,7 +14,6 @@ const ProtectedPage = ({ children }) => {
     error: authError,
     data: authData,
   } = useQuery(GET_AUTH_USER, {
-    fetchPolicy: "network-only",
     onError: (error) => {
       console.error("Authentication error:", error);
       navigate("/login");

@@ -29,8 +29,8 @@ store.on("error", (err) => console.log("Session store error:", err));
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://budgettrackerui.vercel.app",
     credentials: true,
+    origin: "https://budgettrackerui.vercel.app/",
     methods: ["GET", "POST", "OPTIONS"],
   }),
 );

@@ -34,7 +34,8 @@ store.on("error", (err) => console.log("Session store error:", err));
 
 app.use(
   session({
-    sameSite: "none",
+    httpOnly: true, // cookie cannot be accessed by client side javascript
+    secure: true, // Set to true in production
     secret: process.env.SESSION_SECRET, // Make sure this is set correctly
     resave: false,
     saveUninitialized: false,

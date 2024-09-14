@@ -30,7 +30,7 @@ store.on("error", (err) => console.log("Session store error:", err));
 app.use(
   cors({
     credentials: true,
-    origin: "https://budgettrackerui.vercel.app/",
+    origin: "https://budgettrackerui.vercel.app",
     methods: ["GET", "POST", "OPTIONS"],
   }),
 );

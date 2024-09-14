@@ -20,7 +20,7 @@ const httpServer = http.createServer(app);
 
 app.use(
   cors({
-    origin: "http://localhost:8000", // Adjust this to match your client's URL
+    origin: "https://budgettrackerui.vercel.app", // Adjust this to match your client's URL
     credentials: true,
   }),
 );

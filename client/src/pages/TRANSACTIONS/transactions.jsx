@@ -14,9 +14,9 @@ export default function Transactions() {
     date: "",
     search: "",
   });
-  const transactionDate = new Date(parseInt("1715856000000", 10));
+  const transactionDate = new Date(parseInt("1715856000000", 10)).toISOString().split("T")[0];
   console.log(new Date(filters.date).toDateString());
-  console.log(transactionDate.toDateString());
+  console.log(transactionDate);
   // Memoized filtered and sorted transactions
   const filteredAndSortedTransactions = useMemo(() => {
     return transactions

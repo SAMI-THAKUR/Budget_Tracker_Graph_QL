@@ -57,6 +57,8 @@ app.get("/set-cookie", (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // Use true if in production, // Set to true if using HTTPS
     sameSite: "None",
+    domain: "budget-tracker-graph-ql.vercel.app", // Set this to your domain
+    path: "/", // Ensure this is set correctly
   });
   res.send("Cookie has been set");
 });

@@ -1,8 +1,9 @@
 import express from "express";
 import http from "http";
+import path from "path";
 import session from "express-session";
 import passport from "passport";
-import ConnectMongo from "connect-mongodb-session";
+import connectMongo from "connect-mongodb-session";
 import mongoose from "mongoose";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
@@ -16,59 +17,60 @@ import { buildContext } from "graphql-passport";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
-
+configurePassport();
+const __dirname = path.resolve();
 const app = express();
 
 const httpServer = http.createServer(app);
-const MongoDbStore = ConnectMongo(session);
-const store = new MongoDbStore({
+
+const MongoDBStore = connectMongo(session);
+
+const store = new MongoDBStore({
   uri: process.env.MONGO_URL,
   collection: "sessions",
 });
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: "https://budget-tracker-graph-ql.vercel.app",
-    credentials: true,
-  }),
-);
-store.on("error", (err) => console.log("Session store error:", err));
+
+store.on("error", (err) => console.log(err));
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: store,
+    resave: false, // this option specifies whether to save the session to the store on every request
+    saveUninitialized: false, // option specifies whether to save uninitialized sessions
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
-      secure: true, // Ensure cookies are only sent over HTTPS
-      httpOnly: true, // Cookies cannot be accessed by client-side JavaScript
-      sameSite: "None", // Allows cookies to be sent in cross-origin requests
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true, // this option prevents the Cross-Site Scripting (XSS) attacks
     },
+    store: store,
   }),
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
-app.get("/set-cookie", (req, res) => {
-  res.cookie("test_cookie", "cookie_value", {
-    maxAge: 1000 * 60 * 60 * 24,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Use true if in production, // Set to true if using HTTPS
-    sameSite: "None",
-    domain: "budget-tracker-graph-ql.vercel.app", // Set this to your domain
-    path: "/", // Ensure this is set correctly
-  });
-  res.send("Cookie has been set");
-});
-configurePassport();
 
 const server = new ApolloServer({
   typeDefs: TypeDefs,
   resolvers: Resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
+
+// Ensure we wait for our server to start
+await server.start();
+
+// Set up our Express middleware to handle CORS, body parsing,
+// and our expressMiddleware function.
+app.use(
+  "/graphql",
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+  express.json(),
+  // expressMiddleware accepts the same arguments:
+  // an Apollo Server instance and optional configuration options
+  expressMiddleware(server, {
+    context: async ({ req, res }) => buildContext({ req, res }),
+  }),
+);
 
 await server.start();
 

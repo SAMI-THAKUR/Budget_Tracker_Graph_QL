@@ -55,7 +55,6 @@ const server = new ApolloServer({
   typeDefs: TypeDefs,
   resolvers: Resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  cors: corsOptions,
 });
 
 await server.start();

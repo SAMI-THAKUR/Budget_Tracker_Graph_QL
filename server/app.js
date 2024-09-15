@@ -101,6 +101,13 @@ app.get("/test-auth", (req, res) => {
   }
 });
 
+// npm run build will build your frontend app, and it will the optimized version of your app
+app.use(express.static(path.join(__dirname, "client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
+
 const PORT = process.env.PORT || 4000;
 
 mongoose

@@ -1,23 +1,31 @@
 import express from "express";
 import http from "http";
+import cors from "cors";
+import dotenv from "dotenv";
 import path from "path";
-import session from "express-session";
 import passport from "passport";
+import session from "express-session";
 import connectMongo from "connect-mongodb-session";
-import mongoose from "mongoose";
+
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import TypeDefs from "./type/typeDefs.js";
-import Resolvers from "./resolvers/resolver.js";
-import { configurePassport } from "./passport/passport.js";
-import dotenv from "dotenv";
-import cors from "cors";
+
 import { buildContext } from "graphql-passport";
-import cookieParser from "cookie-parser";
+
+import Resolvers from "./resolvers/resolver.js";
+import TypeDefs from "./type/typeDefs.js";
+
+import { connectDB } from "./db/connectDB.js";
+import { configurePassport } from "./passport/passport.config.js";
+
+import job from "./cron.js";
 
 dotenv.config();
 configurePassport();
+
+job.start();
+
 const __dirname = path.resolve();
 const app = express();
 
@@ -26,7 +34,7 @@ const httpServer = http.createServer(app);
 const MongoDBStore = connectMongo(session);
 
 const store = new MongoDBStore({
-  uri: process.env.MONGO_URL,
+  uri: process.env.MONGO_URI,
   collection: "sessions",
 });
 
@@ -44,6 +52,7 @@ app.use(
     store: store,
   }),
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -72,35 +81,6 @@ app.use(
   }),
 );
 
-await server.start();
-
-app.use(
-  "/graphql",
-  express.json(),
-  expressMiddleware(server, {
-    context: async ({ req, res }) => {
-      const context = buildContext({ req, res });
-      console.log(req.cookies);
-      console.log("GraphQL Context - Authenticated:", context.isAuthenticated());
-      console.log("GraphQL Context - User:", context.getUser()?.id);
-      return context;
-    },
-  }),
-);
-
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-// Test route for authentication
-app.get("/test-auth", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({ authenticated: true, user: req.user });
-  } else {
-    res.json({ authenticated: false });
-  }
-});
-
 // npm run build will build your frontend app, and it will the optimized version of your app
 app.use(express.static(path.join(__dirname, "client/dist")));
 
@@ -108,14 +88,19 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/dist", "index.html"));
 });
 
-const PORT = process.env.PORT || 4000;
+// Modified server startup
+await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+import mongoose from "mongoose";
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("Connected to Database");
-    httpServer.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch((err) => console.log("Database connection error:", err));
+export const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
+};
+await connectDB();
+
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);

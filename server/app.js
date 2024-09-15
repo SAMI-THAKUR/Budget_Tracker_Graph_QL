@@ -22,7 +22,6 @@ const httpServer = http.createServer(app);
 const corsOptions = {
   origin: "https://budgettrackerui.vercel.app",
   credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
 const MongoDbStore = ConnectMongo(session);
 const store = new MongoDbStore({
@@ -66,7 +65,6 @@ app.use(
   cors({
     origin: "https://budgettrackerui.vercel.app",
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
   express.json(),
   expressMiddleware(server, {

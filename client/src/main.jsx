@@ -1,15 +1,19 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from "@apollo/client";
 import { Provider } from "react-redux";
 import store from "./store.js";
 import "./index.css";
 
-const client = new ApolloClient({
+const link = createHttpLink({
   uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
+  credentials: "'include'",
+});
+
+const client = new ApolloClient({
   cache: new InMemoryCache(),
-  credentials: "include",
+  link,
 });
 
 createRoot(document.getElementById("root")).render(

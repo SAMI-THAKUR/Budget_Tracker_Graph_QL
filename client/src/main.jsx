@@ -7,9 +7,6 @@ import store from "./store.js";
 import "./index.css";
 
 const client = new ApolloClient({
-  fetchOptions: {
-    credentials: "include",
-  },
   uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
   cache: new InMemoryCache(),
   credentials: "include",

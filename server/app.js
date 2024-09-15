@@ -15,8 +15,6 @@ import { buildContext } from "graphql-passport";
 
 import Resolvers from "./resolvers/resolver.js";
 import TypeDefs from "./type/typeDefs.js";
-
-import { connectDB } from "./db/connectDB.js";
 import { configurePassport } from "./passport/passport.config.js";
 
 import job from "./cron.js";
@@ -92,7 +90,7 @@ app.get("*", (req, res) => {
 await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 import mongoose from "mongoose";
 
-export const connectDB = async () => {
+const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);

@@ -37,7 +37,7 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
       httpOnly: true,
-      sameSite: "none", // Or "none" if cross-site cookies are needed
+      sameSite: "None", // Or "none" if cross-site cookies are needed
       secure: true, // Or true if using
     },
   }),

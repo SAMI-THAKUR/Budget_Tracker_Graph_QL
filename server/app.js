@@ -15,7 +15,7 @@ import { buildContext } from "graphql-passport";
 
 import Resolvers from "./resolvers/resolver.js";
 import TypeDefs from "./type/typeDefs.js";
-import { configurePassport } from "./passport/passport.config.js";
+import { configurePassport } from "./passport/passport.js";
 
 import job from "./cron.js";
 

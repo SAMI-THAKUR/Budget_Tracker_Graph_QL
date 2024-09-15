@@ -31,6 +31,7 @@ app.use(
   cors({
     credentials: true,
     origin: "https://budgettrackerui.vercel.app",
+    methods: ["GET", "POST", "OPTIONS"],
   }),
 );
 
@@ -45,6 +46,7 @@ app.use(
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      path: "/",
     },
   }),
 );

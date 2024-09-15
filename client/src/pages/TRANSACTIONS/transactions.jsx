@@ -14,18 +14,27 @@ export default function Transactions() {
     date: "",
     search: "",
   });
-
+  const transactionDate = new Date(parseInt("1715856000000", 10));
+  console.log(new Date(filters.date).toDateString());
+  console.log(transactionDate.toDateString());
   // Memoized filtered and sorted transactions
   const filteredAndSortedTransactions = useMemo(() => {
     return transactions
       .filter((transaction) => {
         const categoryMatch = !filters.category || transaction.category === filters.category;
         const paymentTypeMatch = !filters.paymentType || transaction.paymentType === filters.paymentType;
-        const dateMatch = !filters.date || new Date(parseInt(transaction.date, 10)).toLocaleDateString("en-US") === filters.date;
+
+        // Date filtering logic
+        const transactionDate = new Date(parseInt(transaction.date, 10));
+        const filterDate = filters.date ? new Date(filters.date) : null;
+
+        const dateMatch = !filterDate || transactionDate.toDateString() === filterDate.toDateString();
+
         const searchMatch =
           !filters.search ||
           transaction.name.toLowerCase().includes(filters.search.toLowerCase()) ||
           transaction.amount.toString().includes(filters.search);
+
         return categoryMatch && paymentTypeMatch && dateMatch && searchMatch;
       })
       .sort((a, b) => {
@@ -64,7 +73,7 @@ export default function Transactions() {
 
         <select name="paymentType" value={filters.paymentType} onChange={handleFilterChange} className="border rounded p-2">
           <option value="">All Payment Types</option>
-          <option value="credit">Card</option>
+          <option value="card">Card</option>
           <option value="cash">Cash</option>
           <option value="bank_transfer">Bank Transfer</option>
           <option value="cheque">Cheque</option>

@@ -43,9 +43,11 @@ export default function Update_Transaction() {
   useEffect(() => {
     const foundTransaction = transactions.find((transaction) => transaction._id === id);
     if (foundTransaction) {
-      const dateObj = new Date(foundTransaction.date);
-      const formattedDate = dateObj.toISOString().split("T")[0]; // Format as YYYY-MM-DD for input[type="date"]
-
+      const formattedDate = new Date(parseInt(foundTransaction.date, 10)).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
       setTransaction(foundTransaction);
       setName(foundTransaction.name || "");
       setAmount(foundTransaction.amount || "");

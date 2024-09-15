@@ -3,8 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import GridBackground from "./components/ui/GridBackgroun.jsx";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import store from "./store.js";
 
 const client = new ApolloClient({
   // TODO => Update the uri on production
@@ -15,12 +15,10 @@ const client = new ApolloClient({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <GridBackground>
-        <ApolloProvider client={client}>
-          <App />
-        </ApolloProvider>
-      </GridBackground>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </ApolloProvider>
   </React.StrictMode>,
 );

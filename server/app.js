@@ -19,7 +19,11 @@ dotenv.config();
 
 const app = express();
 const httpServer = http.createServer(app);
-
+const corsOptions = {
+  origin: "https://budgettrackerui.vercel.app",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 const MongoDbStore = ConnectMongo(session);
 const store = new MongoDbStore({
   uri: process.env.MONGO_URL,
@@ -52,6 +56,7 @@ const server = new ApolloServer({
   typeDefs: TypeDefs,
   resolvers: Resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  cors: corsOptions,
 });
 
 await server.start();
@@ -61,6 +66,7 @@ app.use(
   cors({
     origin: "https://budgettrackerui.vercel.app",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
   express.json(),
   expressMiddleware(server, {

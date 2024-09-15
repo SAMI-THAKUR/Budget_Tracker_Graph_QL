@@ -17,12 +17,8 @@ import Resolvers from "./resolvers/resolver.js";
 import TypeDefs from "./type/typeDefs.js";
 import { configurePassport } from "./passport/passport.js";
 
-import job from "./cron.js";
-
 dotenv.config();
 configurePassport();
-
-job.start();
 
 const __dirname = path.resolve();
 const app = express();

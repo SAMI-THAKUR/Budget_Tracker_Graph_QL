@@ -1,40 +1,26 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { Provider } from "react-redux";
-import store from "./store.js";
 import "./index.css";
+import { BrowserRouter } from "react-router-dom";
+import GridBackground from "./components/ui/GridBackgroun.jsx";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
-// Create httpLink for the GraphQL endpoint
-const httpLink = new HttpLink({
-  uri: "https://budget-tracker-graph-ql-bo9k.vercel.app/graphql",
-  credentials: "include", // Ensure cookies like connect.sid are included with requests
-});
-
-// Create authLink to set headers, including the connect.sid cookie
-const authLink = setContext((_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-    },
-  };
-});
-
-// Combine authLink with httpLink
 const client = new ApolloClient({
-  link: authLink.concat(httpLink), // Combine authLink and httpLink
-  cache: new InMemoryCache(),
+  // TODO => Update the uri on production
+  uri: import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:4000/graphql" : "/graphql", // the URL of our GraphQL server.
+  cache: new InMemoryCache(), // Apollo Client uses to cache query results after fetching them.
+  credentials: "include", // This tells Apollo Client to send cookies along with every request to the server.
 });
 
-// Render the React app
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </ApolloProvider>
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <GridBackground>
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
+      </GridBackground>
+    </BrowserRouter>
+  </React.StrictMode>,
 );

@@ -18,12 +18,7 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://budgettrackerui.vercel.app",
-    credentials: true,
-  }),
-);
+
 const httpServer = http.createServer(app);
 const MongoDbStore = ConnectMongo(session);
 const store = new MongoDbStore({
@@ -31,6 +26,12 @@ const store = new MongoDbStore({
   collection: "sessions",
 });
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:8000",
+    credentials: true,
+  }),
+);
 store.on("error", (err) => console.log("Session store error:", err));
 
 app.use(
@@ -42,8 +43,8 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
       httpOnly: true,
-      sameSite: "none", // Or "none" if cross-site cookies are needed
-      secure: true, // Or true if using
+      sameSite: "lax",
+      secure: false, // Or true if using
     },
   }),
 );
@@ -63,10 +64,7 @@ await server.start();
 
 app.use(
   "/graphql",
-  cors({
-    origin: "https://budgettrackerui.vercel.app",
-    credentials: true,
-  }),
+
   express.json(),
   expressMiddleware(server, {
     context: async ({ req, res }) => {

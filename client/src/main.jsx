@@ -7,7 +7,7 @@ import store from "./store.js";
 import "./index.css";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
   cache: new InMemoryCache(),
   credentials: "include",
 });

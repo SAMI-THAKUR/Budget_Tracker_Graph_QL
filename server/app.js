@@ -59,7 +59,7 @@ await server.start();
 app.use(
   "/graphql",
   cors({
-    origin: "http://localhost:8000",
+    origin: "https://budgettrackerui.vercel.app",
     credentials: true,
   }),
   express.json(),

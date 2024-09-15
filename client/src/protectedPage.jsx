@@ -25,11 +25,12 @@ const ProtectedPage = ({ children }) => {
       if (authData?.authUser) {
         dispatch(setUser(authData.authUser));
       } else {
+        console.log(authData);
         console.warn("User is not authenticated.");
         navigate("/login");
       }
     }
-  }, [authLoading, authData]);
+  }, [authLoading, authData, navigate, dispatch]);
 
   if (authLoading) {
     return <div>Loading...</div>;
@@ -39,7 +40,7 @@ const ProtectedPage = ({ children }) => {
     return <div>Error: {authError.message}</div>;
   }
 
-  return authData?.authUser ? <div>{children}</div> : null;
+  return <div>{children}</div>;
 };
 
 export default ProtectedPage;

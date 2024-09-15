@@ -14,6 +14,7 @@ const userResolver = {
     },
     authUser: async (_, __, context) => {
       try {
+        console.log(context.cookie);
         const user = await context.getUser(); // Ensure this function returns user data
         return user;
       } catch (err) {

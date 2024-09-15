@@ -13,6 +13,7 @@ import { configurePassport } from "./passport/passport.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import { buildContext } from "graphql-passport";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -24,16 +25,8 @@ const store = new MongoDbStore({
   uri: process.env.MONGO_URL,
   collection: "sessions",
 });
-
+app.use(cookieParser());
 store.on("error", (err) => console.log("Session store error:", err));
-
-app.use(
-  cors({
-    credentials: true,
-    origin: "https://budgettrackerui.vercel.app",
-    methods: ["GET", "POST", "OPTIONS"],
-  }),
-);
 
 app.use(
   session({
@@ -44,9 +37,7 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      path: "/",
+      sameSite: "lax", // Or "none" if cross-site cookies are needed
     },
   }),
 );
@@ -66,10 +57,15 @@ await server.start();
 
 app.use(
   "/graphql",
+  cors({
+    origin: "http://localhost:8000",
+    credentials: true,
+  }),
   express.json(),
   expressMiddleware(server, {
     context: async ({ req, res }) => {
       const context = buildContext({ req, res });
+      console.log(req.cookies);
       console.log("GraphQL Context - Authenticated:", context.isAuthenticated());
       console.log("GraphQL Context - User:", context.getUser()?.id);
       return context;

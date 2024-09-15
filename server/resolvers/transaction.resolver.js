@@ -1,4 +1,3 @@
-import { transactions } from "../data.js";
 import Transaction from "../model/transaction.model.js";
 import User from "../model/user.model.js";
 import { ObjectId } from "mongodb"; // Make sure to import ObjectId i

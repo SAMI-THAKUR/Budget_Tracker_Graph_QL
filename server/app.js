@@ -18,11 +18,13 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
+app.use(
+  cors({
+    origin: "https://budgettrackerui.vercel.app",
+    credentials: true,
+  }),
+);
 const httpServer = http.createServer(app);
-const corsOptions = {
-  origin: "https://budgettrackerui.vercel.app",
-  credentials: true,
-};
 const MongoDbStore = ConnectMongo(session);
 const store = new MongoDbStore({
   uri: process.env.MONGO_URL,

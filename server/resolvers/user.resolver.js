@@ -1,4 +1,3 @@
-import { users } from "../data.js";
 import bcrypt from "bcryptjs";
 import User from "../model/user.model.js";
 import Transaction from "../model/transaction.model.js";

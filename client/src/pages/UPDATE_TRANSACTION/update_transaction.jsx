@@ -7,13 +7,11 @@ import { DELETE_TRANSACTION, UPDATE_TRANSACTION } from "../../graphql/mutations/
 import { useMutation } from "@apollo/client";
 import { deleteTransaction, updateTransaction } from "../../feature/transaction.js";
 import { useNavigate } from "react-router-dom";
-import { data } from "autoprefixer";
 
-export default function Update_Transaction(props) {
+export default function Update_Transaction() {
   const navigate = useNavigate();
   const { id } = useParams();
   const transactions = useSelector((state) => state.transactions).transactions;
-  console.log(transactions);
   const dispatch = useDispatch();
   const [transaction, setTransaction] = useState(null);
   const [category, setCategory] = useState("expense");
@@ -37,8 +35,7 @@ export default function Update_Transaction(props) {
       console.error("Update error:", error);
     },
     onCompleted: (data) => {
-      console.log(data["updateTransaction"]);
-      dispatch(updateTransaction(data["updateTransaction"]));
+      dispatch(updateTransaction(data.updateTransaction));
       navigate("/transactions");
     },
   });
@@ -46,9 +43,7 @@ export default function Update_Transaction(props) {
   useEffect(() => {
     const foundTransaction = transactions.find((transaction) => transaction._id === id);
     if (foundTransaction) {
-      // Convert timestamp to a Date object
-      const timestamp = parseInt(foundTransaction.date, 10); // Ensure the timestamp is treated as an integer
-      const dateObj = new Date(timestamp);
+      const dateObj = new Date(foundTransaction.date);
       const formattedDate = dateObj.toISOString().split("T")[0]; // Format as YYYY-MM-DD for input[type="date"]
 
       setTransaction(foundTransaction);
@@ -67,12 +62,11 @@ export default function Update_Transaction(props) {
   const handleUpdate = (e) => {
     e.preventDefault();
 
-    // Create an object with the form data
     const updatedTransactionData = {
       transactionId: id,
       name,
-      amount: parseFloat(amount), // Ensure amount is a number
-      date,
+      amount: parseFloat(amount),
+      date: new Date(date).toISOString(),
       category,
       paymentType,
     };
@@ -100,33 +94,35 @@ export default function Update_Transaction(props) {
             <div className="-mx-3 flex flex-wrap">
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label htmlFor="fName" className="mb-3 block text-base font-medium text-[#07074D]">
+                  <label htmlFor="name" className="mb-3 block text-base font-medium text-[#07074D]">
                     Name
                   </label>
                   <input
                     type="text"
-                    name="fName"
-                    id="fName"
+                    name="name"
+                    id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="First Name"
+                    placeholder="Transaction Name"
                     className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                    required
                   />
                 </div>
               </div>
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label htmlFor="lName" className="mb-3 block text-base font-medium text-[#07074D]">
+                  <label htmlFor="amount" className="mb-3 block text-base font-medium text-[#07074D]">
                     Amount
                   </label>
                   <input
                     type="number"
-                    name="lName"
-                    id="lName"
+                    name="amount"
+                    id="amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="Amount"
                     className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                    required
                   />
                 </div>
               </div>
@@ -145,16 +141,17 @@ export default function Update_Transaction(props) {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                    required
                   />
                 </div>
               </div>
               <div className="w-full px-3 sm:w-1/2">
-                <label className="mb-3 block text-base font-medium text-[#07074D]">Expense Category</label>
+                <label className="mb-3 block text-base font-medium text-[#07074D]">Category</label>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">{category}</Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" sideOffset={5}>
+                  <DropdownMenuContent className="w-56">
                     <DropdownMenuRadioGroup value={category} onValueChange={setCategory}>
                       <DropdownMenuRadioItem value="income">Income</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="expense">Expense</DropdownMenuRadioItem>
@@ -167,35 +164,24 @@ export default function Update_Transaction(props) {
 
             <div className="mb-5">
               <label className="mb-3 block text-base font-medium text-[#07074D]">Payment Type</label>
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentType"
-                    id="radioButton1"
-                    checked={paymentType === "Cash"}
-                    onChange={() => setPaymentType("cash")}
-                    className="h-5 w-5"
-                    value="cash"
-                  />
-                  <label htmlFor="radioButton1" className="pl-3 text-base font-medium text-[#07074D]">
-                    Cash
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentType"
-                    id="radioButton2"
-                    checked={paymentType === "Card"}
-                    onChange={() => setPaymentType("card")}
-                    className="h-5 w-5"
-                    value="cash"
-                  />
-                  <label htmlFor="radioButton2" className="pl-3 text-base font-medium text-[#07074D]">
-                    Card
-                  </label>
-                </div>
+              <div className="flex items-center space-x-6 flex-wrap">
+                {["cash", "card", "bank_transfer", "cheque", "upi"].map((type) => (
+                  <div key={type} className="flex items-center mb-2">
+                    <input
+                      type="radio"
+                      name="paymentType"
+                      id={`radio-${type}`}
+                      checked={paymentType === type}
+                      onChange={() => setPaymentType(type)}
+                      className="h-5 w-5"
+                      value={type}
+                      required
+                    />
+                    <label htmlFor={`radio-${type}`} className="pl-3 text-base font-medium text-[#07074D]">
+                      {type.charAt(0).toUpperCase() + type.slice(1).replace("_", " ")}
+                    </label>
+                  </div>
+                ))}
               </div>
             </div>
 

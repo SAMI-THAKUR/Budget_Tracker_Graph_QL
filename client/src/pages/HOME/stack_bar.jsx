@@ -3,13 +3,21 @@ import { useSelector } from "react-redux";
 
 export default function Stack_Chart() {
   const transactions = useSelector((state) => state.transactions).transactions;
+
+  // Initialize arrays for each payment type and category
   let cash = Array(12).fill(0);
   let card = Array(12).fill(0);
+  let bankTransfer = Array(12).fill(0);
+  let cheque = Array(12).fill(0);
+  let upi = Array(12).fill(0);
+
   // Process each transaction
   transactions.forEach((transaction) => {
     const timestamp = parseInt(transaction.date, 10); // Ensure the timestamp is treated as an integer
     const date = new Date(timestamp); // Create a Date object from the timestamp
     const month = date.getMonth(); // Get month index (0 = January, 11 = December)
+
+    // Increment amount based on payment type
     switch (transaction.paymentType) {
       case "card":
         card[month] += transaction.amount;
@@ -17,19 +25,41 @@ export default function Stack_Chart() {
       case "cash":
         cash[month] += transaction.amount;
         break;
+      case "bank_transfer":
+        bankTransfer[month] += transaction.amount;
+        break;
+      case "cheque":
+        cheque[month] += transaction.amount;
+        break;
+      case "upi":
+        upi[month] += transaction.amount;
+        break;
       default:
         break;
     }
   });
+
   const state = {
     series: [
       {
-        name: "Card Payments",
+        name: "Cash Payments",
         data: cash,
       },
       {
-        name: "Cash Payments",
+        name: "Card Payments",
         data: card,
+      },
+      {
+        name: "Bank Transfer Payments",
+        data: bankTransfer,
+      },
+      {
+        name: "Cheque Payments",
+        data: cheque,
+      },
+      {
+        name: "UPI Payments",
+        data: upi,
       },
     ],
     options: {
@@ -83,8 +113,8 @@ export default function Stack_Chart() {
         bar: {
           horizontal: false,
           borderRadius: 10,
-          borderRadiusApplication: "end", // 'around', 'end'
-          borderRadiusWhenStacked: "last", // 'all', 'last'
+          borderRadiusApplication: "end",
+          borderRadiusWhenStacked: "last",
           dataLabels: {
             total: {
               enabled: true,
@@ -97,8 +127,8 @@ export default function Stack_Chart() {
         },
       },
       xaxis: {
-        type: "category", // Changed from "datetime" to "category" for better readability with the new data
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        type: "category",
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
       },
       legend: {
         position: "right",
@@ -112,5 +142,6 @@ export default function Stack_Chart() {
       },
     },
   };
-  return <ReactApexChart style={{ width: "80vw", maxWidth: "800px" }} options={state.options} series={state.series} type="bar" height={400} />;
+
+  return <ReactApexChart options={state.options} series={state.series} type="bar" height={350} />;
 }

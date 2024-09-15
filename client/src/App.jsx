@@ -10,9 +10,9 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedPage>
-                <Layout />
-              </ProtectedPage>
+              //<ProtectedPage>
+              <Layout />
+              //</ProtectedPage>
             }
           >
             <Route path="/" element={<Home />} />

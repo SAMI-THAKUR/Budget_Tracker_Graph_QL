@@ -55,7 +55,7 @@ app.get("/set-cookie", (req, res) => {
   res.cookie("test_cookie", "cookie_value", {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: false, // Set to true if using HTTPS
+    secure: true, // Set to true if using HTTPS
     sameSite: "None",
   });
   res.send("Cookie has been set");

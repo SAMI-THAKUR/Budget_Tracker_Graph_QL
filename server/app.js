@@ -43,8 +43,8 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 6, // 6 days
       httpOnly: true,
-      sameSite: "none", // Important for cross-site cookies
-      secure: true, // Ensure it's only true in production
+      sameSite: "lax", // Important for cross-site cookies
+      secure: false, // Ensure it's only true in production
     },
   }),
 );

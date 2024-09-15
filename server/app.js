@@ -28,7 +28,7 @@ const store = new MongoDbStore({
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://budgettrackerui.vercel.app",
+    origin: "https://budget-tracker-graph-ql.vercel.app",
     credentials: true,
   }),
 );
@@ -72,7 +72,6 @@ await server.start();
 
 app.use(
   "/graphql",
-
   express.json(),
   expressMiddleware(server, {
     context: async ({ req, res }) => {

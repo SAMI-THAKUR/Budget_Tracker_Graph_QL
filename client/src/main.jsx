@@ -9,7 +9,7 @@ import "./index.css";
 
 // Create httpLink for the GraphQL endpoint
 const httpLink = new HttpLink({
-  uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
+  uri: "https://budget-tracker-graph-ql-bo9k.vercel.app/graphql",
   credentials: "include", // Ensure cookies like connect.sid are included with requests
 });
 

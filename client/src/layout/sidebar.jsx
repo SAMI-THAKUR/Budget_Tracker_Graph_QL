@@ -71,7 +71,10 @@ export default function Sidebar() {
           <div>
             <ul className="space-y-2 font-medium">
               <li className="text-heading font-mono font-bold text-3xl mb-10 mx-auto">
-                <span className="ms-3">Project_Bucks</span>
+                <span className="ms-3">Welcome {user.username}</span>
+              </li>
+              <li className="text-heading font-mono font-bold text-3xl mb-10 mx-auto">
+                <span className="ms-3">Money Map</span>
               </li>
               <li>
                 <Link to={"/"} className="flex items-center p-2 text-text rounded-lg  hover:bg-white  group">

@@ -8,7 +8,7 @@ import "./index.css";
 
 const link = createHttpLink({
   uri: "https://budget-tracker-graph-ql.vercel.app/graphql",
-  credentials: "'include'",
+  credentials: "include",
 });
 
 const client = new ApolloClient({

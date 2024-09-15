@@ -28,7 +28,7 @@ const store = new MongoDbStore({
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:8000",
+    origin: "https://budgettrackerui.vercel.app",
     credentials: true,
   }),
 );
